@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Core.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Measures.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Measures" Namespace="Org.OData.Measures.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata/v4.0/errata03/os/complete/vocabularies/Org.OData.Capabilities.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/cs02/vocabularies/Org.OData.Aggregation.V1.xml" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Aggregation" Namespace="Org.OData.Aggregation.V1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/462030211/Analytics.xml?api=v2" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Analytics" Namespace="com.sap.vocabularies.Analytics.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470974/Common.xml?api=v2" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470971/Communication.xml?api=v2" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="Communication" Namespace="com.sap.vocabularies.Communication.v1"/>
+  </edmx:Reference>
+  <edmx:Reference Uri="https://wiki.scn.sap.com/wiki/download/attachments/448470968/UI.xml?api=v2" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+  </edmx:Reference>
+  <edmx:DataServices m:DataServiceVersion="2.0">
+    <Schema Namespace="CatalogService" Alias="CatalogService" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+      <EntityContainer Name="EntityContainer" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Books" EntityType="CatalogService.Books"/>
+        <EntitySet Name="Authors" EntityType="CatalogService.Authors"/>
+        <EntitySet Name="Orders" EntityType="CatalogService.Orders"/>
+        <AssociationSet Name="Books_author" Association="CatalogService.Books_author">
+          <End Role="Books" EntitySet="Books"/>
+          <End Role="Authors" EntitySet="Authors"/>
+        </AssociationSet>
+        <AssociationSet Name="Authors_books" Association="CatalogService.Authors_books">
+          <End Role="Authors" EntitySet="Authors"/>
+          <End Role="Books" EntitySet="Books"/>
+        </AssociationSet>
+        <AssociationSet Name="Orders_book" Association="CatalogService.Orders_book">
+          <End Role="Orders" EntitySet="Orders"/>
+          <End Role="Books" EntitySet="Books"/>
+        </AssociationSet>
+      </EntityContainer>
+      <EntityType Name="Books" Abstract="false" OpenType="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="title" Type="Edm.String"/>
+        <NavigationProperty Name="author" Relationship="CatalogService.Books_author" FromRole="Books" ToRole="Authors" sap:value-list="fixed-values"/>
+        <Property Name="stock" Type="Edm.Int32"/>
+        <Property Name="author_ID" Type="Edm.Int32" sap:value-list="fixed-values"/>
+      </EntityType>
+      <EntityType Name="Authors" Abstract="false" OpenType="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="name" Type="Edm.String"/>
+        <NavigationProperty Name="books" Relationship="CatalogService.Authors_books" FromRole="Authors" ToRole="Books"/>
+      </EntityType>
+      <EntityType Name="Orders" Abstract="false" OpenType="false">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="book" Relationship="CatalogService.Orders_book" FromRole="Orders" ToRole="Books"/>
+        <Property Name="buyer" Type="Edm.String"/>
+        <Property Name="date" Type="Edm.DateTimeOffset"/>
+        <Property Name="amount" Type="Edm.Int32"/>
+        <Property Name="book_ID" Type="Edm.Int32"/>
+      </EntityType>
+      <Association Name="Books_author">
+        <End Role="Books" Type="CatalogService.Books" Multiplicity="*"/>
+        <End Role="Authors" Type="CatalogService.Authors" Multiplicity="0..1"/>
+        <ReferentialConstraint>
+          <Principal Role="Authors">
+            <PropertyRef Name="ID"/>
+          </Principal>
+          <Dependent Role="Books">
+            <PropertyRef Name="author_ID"/>
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Association Name="Authors_books">
+        <End Role="Authors" Type="CatalogService.Authors" Multiplicity="*"/>
+        <End Role="Books" Type="CatalogService.Books" Multiplicity="*"/>
+      </Association>
+      <Association Name="Orders_book">
+        <End Role="Orders" Type="CatalogService.Orders" Multiplicity="*"/>
+        <End Role="Books" Type="CatalogService.Books" Multiplicity="0..1"/>
+        <ReferentialConstraint>
+          <Principal Role="Books">
+            <PropertyRef Name="ID"/>
+          </Principal>
+          <Dependent Role="Orders">
+            <PropertyRef Name="book_ID"/>
+          </Dependent>
+        </ReferentialConstraint>
+      </Association>
+      <Annotations Target="CatalogService.Books" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ID"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="title"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="stock"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="author/name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record Type="UI.HeaderInfoType">
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="title"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="TypeName" String="Book"/>
+            <PropertyValue Property="TypeNamePlural" String="Books"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ID"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="title"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="author/name"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.CollectionFacet">
+              <PropertyValue Property="Facets">
+                <Collection>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="General Info"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.Identification"/>
+                  </Record>
+                </Collection>
+              </PropertyValue>
+              <PropertyValue Property="Label" String="Book Details"/>
+            </Record>
+            <Record Type="UI.ReferenceFacet">
+              <PropertyValue Property="Label" String="Orders"/>
+              <PropertyValue Property="Target" AnnotationPath="orders/@UI.LineItem"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="Core.Immutable" Bool="true"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Books/ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Id"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Books/title" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Title"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Books/author" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Text" Path="author/name"/>
+        <Annotation Term="Common.Label" String="Author"/>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Authors"/>
+            <PropertyValue Property="Label" String="Authors"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="author_ID"/>
+                  <PropertyValue Property="ValueListProperty" String="ID"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="CatalogService.Books/stock" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Stock"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Books/author_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Text" Path="author/name"/>
+        <Annotation Term="Common.Label" String="Author"/>
+        <Annotation Term="Common.ValueList">
+          <Record Type="Common.ValueListType">
+            <PropertyValue Property="CollectionPath" String="Authors"/>
+            <PropertyValue Property="Label" String="Authors"/>
+            <PropertyValue Property="SearchSupported" Bool="true"/>
+            <PropertyValue Property="Parameters">
+              <Collection>
+                <Record Type="Common.ValueListParameterOut">
+                  <PropertyValue Property="LocalDataProperty" PropertyPath="author_ID"/>
+                  <PropertyValue Property="ValueListProperty" String="ID"/>
+                </Record>
+                <Record Type="Common.ValueListParameterDisplayOnly">
+                  <PropertyValue Property="ValueListProperty" String="name"/>
+                </Record>
+              </Collection>
+            </PropertyValue>
+          </Record>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="CatalogService.Authors" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Core.Immutable" Bool="true"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Authors/name" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Author"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="UI.LineItem">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ID"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="book"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="buyer"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="date"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="amount"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.HeaderInfo">
+          <Record Type="UI.HeaderInfoType">
+            <PropertyValue Property="Title">
+              <Record Type="UI.DataField">
+                <PropertyValue Property="Value" Path="ID"/>
+              </Record>
+            </PropertyValue>
+            <PropertyValue Property="TypeName" String="Order"/>
+            <PropertyValue Property="TypeNamePlural" String="Orders"/>
+          </Record>
+        </Annotation>
+        <Annotation Term="UI.Identification">
+          <Collection>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="ID"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="book"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="buyer"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="date"/>
+            </Record>
+            <Record Type="UI.DataField">
+              <PropertyValue Property="Value" Path="amount"/>
+            </Record>
+          </Collection>
+        </Annotation>
+        <Annotation Term="UI.Facets">
+          <Collection>
+            <Record Type="UI.CollectionFacet">
+              <PropertyValue Property="Facets">
+                <Collection>
+                  <Record Type="UI.ReferenceFacet">
+                    <PropertyValue Property="Label" String="Assignment"/>
+                    <PropertyValue Property="Target" AnnotationPath="@UI.Identification"/>
+                  </Record>
+                </Collection>
+              </PropertyValue>
+              <PropertyValue Property="Label" String="Orders"/>
+            </Record>
+          </Collection>
+        </Annotation>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders/ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Order"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders/book" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Book"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders/buyer" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Buyer"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders/date" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Date"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders/amount" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Amount"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+      </Annotations>
+      <Annotations Target="CatalogService.Orders/book_ID" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+        <Annotation Term="Common.Label" String="Book"/>
+        <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/ReadOnly"/>
+      </Annotations>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
