@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.sap.cloud.servicesdk.prov</groupId>
 		<artifactId>projects-parent-odatav2</artifactId>
-		<version>1.17.0</version>
+		<version>1.13.1</version>
 	</parent>
 	<artifactId>srv</artifactId>
 	<groupId>com.company.bookshop</groupId>
@@ -15,25 +15,6 @@
 	<properties>
 		<packageName>com.company.bookshop</packageName>
 	</properties>
-	<dependencies>	
-		<dependency>
-			<groupId>com.sap.cloud.servicesdk.csn2jpa</groupId>
-			<artifactId>runtime</artifactId>
-			<version>1.13.1</version>
-		</dependency>		
-		<!-- EclipseLink -->
-		<dependency>
-			<groupId>org.eclipse.persistence</groupId>
-			<artifactId>eclipselink</artifactId>
-			<version>2.7.1</version>
-		</dependency>
-		<!-- JTA Support for SAP Cloud Platform SDK for Service Development -->
-		<dependency>
-			<groupId>com.sap.cloud.servicesdk.prov</groupId>
-			<artifactId>cf-xsa-util</artifactId>
-			<version>1.13.1</version>
-		</dependency>		
-	</dependencies>	
 	<build>
 		<finalName>${project.artifactId}-${project.version}</finalName>
 		<plugins >
@@ -78,7 +59,7 @@
 			<plugin>
 				<groupId>com.sap.cloud.servicesdk.csn2jpa</groupId>
 				<artifactId>csn2jpa-maven-plugin</artifactId>
-				<version>1.0.0</version>
+				<version>1.0.3</version>
 				<executions>
 					<execution>
 						<phase>generate-resources</phase>
@@ -106,6 +87,20 @@
 			</resource>
 		</resources>
 	</build>
+	<dependencies>	
+		<!-- EclipseLink -->
+		<dependency>
+			<groupId>org.eclipse.persistence</groupId>
+			<artifactId>eclipselink</artifactId>
+			<version>2.7.1</version>
+		</dependency>
+		<!-- JTA Support for SAP Cloud Platform SDK for Service Development -->
+		<dependency>
+		    <groupId>com.sap.cloud.servicesdk.prov</groupId>
+		    <artifactId>cf-xsa-util</artifactId>
+		    <version>${project.parent.version}</version>
+		</dependency>		
+	</dependencies>
 	<profiles>
 		<profile>
 			<activation>
